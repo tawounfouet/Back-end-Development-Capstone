@@ -21,10 +21,20 @@ def index(request):
     return render(request, "index.html")
 
 
+# def songs(request):
+#     # songs = {"songs":[]}
+#     # return render(request, "songs.html", {"songs": [insert list here]})
+#     pass
+
 def songs(request):
-    # songs = {"songs":[]}
-    # return render(request, "songs.html", {"songs": [insert list here]})
-    pass
+    dummy_data = [
+        {
+            "id": 1,
+            "title": "duis faucibus accumsan odio curabitur convallis",
+            "lyrics": "Morbi non lectus. Aliquam sit amet diam in magna bibendum imperdiet. Nullam orci pede, venenatis non, sodales sed, tincidunt eu, felis."
+        }
+    ]
+    return render(request, "songs.html", {"songs": dummy_data})
 
 
 def photos(request):
