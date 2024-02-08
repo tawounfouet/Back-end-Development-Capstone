@@ -1,4 +1,4 @@
-from django.contrib.auth import login, logout
+from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404
@@ -53,6 +53,41 @@ def signup(request):
 #     return render(request, "signup.html", {"form": SignUpForm})
 
 
+# def login_view(request):
+#     if request.method == "POST":
+#         username = request.POST.get("username")
+#         password = request.POST.get("password")
+#         user = authenticate(request, username=username, password=password)
+#         if user is not None:
+#             login(request, user)
+#             return HttpResponseRedirect(reverse("index"))
+#         else:
+#             return render(request, "login.html", {"form": LoginForm(), "message": "Invalid username or password"})
+#     return render(request, "login.html", {"form": LoginForm()})
+
+
+def login_view(request):
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+        try:
+            user = User.objects.get(username=username)
+            if user.check_password(password):
+                login(request, user)
+                return HttpResponseRedirect(reverse("index"))
+        except User.DoesNotExist:
+            return render(request, "login.html", {"form": LoginForm})
+    return render(request, "login.html", {"form": LoginForm})
+
+
+
+
+def logout_view(request):
+    logout(request)
+    return HttpResponseRedirect(reverse("login"))
+
+
+
 
 def index(request):
     return render(request, "index.html")
@@ -91,11 +126,6 @@ def photos(request):
     ]
     return render(request, "photos.html", {"photos": dummy_data})
 
-def login_view(request):
-    pass
-
-def logout_view(request):
-    pass
 
 def concerts(request):
     pass
