@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth.hashers import make_password
+from django.contrib.auth.decorators import login_required
 
 from concert.forms import LoginForm, SignUpForm
 from concert.models import Concert, ConcertAttending
@@ -127,8 +128,42 @@ def photos(request):
     return render(request, "photos.html", {"photos": dummy_data})
 
 
+
+
+# @login_required
+# def concerts(request):
+#     lst_of_concert = []
+#     concert_objects = Concert.objects.all()
+#     for item in concert_objects:
+#         try:
+#             status = item.attendee.filter(user=request.user).first().attending
+#         except AttributeError:
+#             status = "-"
+#         lst_of_concert.append({
+#             "concert": item,
+#             "status": status
+#         })
+#     return render(request, "concerts.html", {"concerts": lst_of_concert})
+
+
 def concerts(request):
-    pass
+    if request.user.is_authenticated:
+        lst_of_concert = []
+        concert_objects = Concert.objects.all()
+        for item in concert_objects:
+            try:
+                status = item.attendee.filter(
+                    user=request.user).first().attending
+            except:
+                status = "-"
+            lst_of_concert.append({
+                "concert": item,
+                "status": status
+            })
+        return render(request, "concerts.html", {"concerts": lst_of_concert})
+    else:
+        return HttpResponseRedirect(reverse("login"))
+
 
 
 def concert_detail(request, id):
