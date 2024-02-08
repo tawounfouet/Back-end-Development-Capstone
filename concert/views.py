@@ -13,24 +13,6 @@ import requests as req
 
 # Create your views here.
 
-# def signup(request):
-#     if request.method == "POST":
-#         form = SignUpForm(request.POST)
-#         if form.is_valid():
-#             username = form.cleaned_data["username"]
-#             password = form.cleaned_data["password"]
-#             try:
-#                 user = User.objects.get(username=username)
-#                 return render(request, "signup.html", {"form": SignUpForm(), "message": "User already exists"})
-#             except User.DoesNotExist:
-#                 user = User.objects.create(username=username, password=make_password(password))
-#                 login(request, user)
-#                 return redirect("index")
-#     else:
-#         form = SignUpForm()
-#     return render(request, "signup.html", {"form": form})
-
-
 def signup(request):
     if request.method == "POST":
         username = request.POST.get("username")
@@ -38,15 +20,37 @@ def signup(request):
         try:
             user = User.objects.filter(username=username).first()
             if user:
-                return render(request, "signup.html", {"form": SignUpForm, "message": "user already exist"})
+                return render(request, "signup.html", {"form": SignUpForm(), "message": "User already exists"})
             else:
-                user = User.objects.create(
-                    username=username, password=make_password(password))
-                login(request, user)
+                # Create a new user with hashed password
+                new_user = User.objects.create(username=username, password=make_password(password))
+                # Log in the new user
+                login(request, new_user)
+                # Redirect to the index page after successful sign up
                 return HttpResponseRedirect(reverse("index"))
         except User.DoesNotExist:
-            return render(request, "signup.html", {"form": SignUpForm})
-    return render(request, "signup.html", {"form": SignUpForm})
+            # Render the signup form with an error message if user does not exist
+            return render(request, "signup.html", {"form": SignUpForm(), "message": "User does not exist"})
+    # Render the signup form for GET requests
+    return render(request, "signup.html", {"form": SignUpForm()})
+
+
+# def signup(request):
+#     if request.method == "POST":
+#         username = request.POST.get("username")
+#         password = request.POST.get("password")
+#         try:
+#             user = User.objects.filter(username=username).first()
+#             if user:
+#                 return render(request, "signup.html", {"form": SignUpForm, "message": "user already exist"})
+#             else:
+#                 user = User.objects.create(
+#                     username=username, password=make_password(password))
+#                 login(request, user)
+#                 return HttpResponseRedirect(reverse("index"))
+#         except User.DoesNotExist:
+#             return render(request, "signup.html", {"form": SignUpForm})
+#     return render(request, "signup.html", {"form": SignUpForm})
 
 
 
