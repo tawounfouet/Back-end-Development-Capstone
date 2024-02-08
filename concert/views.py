@@ -37,10 +37,22 @@ def songs(request):
     return render(request, "songs.html", {"songs": dummy_data})
 
 
+# def photos(request):
+#     # photos = []
+#     # return render(request, "photos.html", {"photos": photos})
+#     pass
 def photos(request):
-    # photos = []
-    # return render(request, "photos.html", {"photos": photos})
-    pass
+    dummy_data = [
+        {
+            "id": 1,
+            "pic_url": "http://dummyimage.com/136x100.png/5fa2dd/ffffff",
+            "event_country": "United States",
+            "event_state": "District of Columbia",
+            "event_city": "Washington",
+            "event_date": "11/16/2022"
+        }
+    ]
+    return render(request, "photos.html", {"photos": dummy_data})
 
 def login_view(request):
     pass
