@@ -2,7 +2,7 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth.hashers import make_password
 
@@ -13,8 +13,41 @@ import requests as req
 
 # Create your views here.
 
+# def signup(request):
+#     if request.method == "POST":
+#         form = SignUpForm(request.POST)
+#         if form.is_valid():
+#             username = form.cleaned_data["username"]
+#             password = form.cleaned_data["password"]
+#             try:
+#                 user = User.objects.get(username=username)
+#                 return render(request, "signup.html", {"form": SignUpForm(), "message": "User already exists"})
+#             except User.DoesNotExist:
+#                 user = User.objects.create(username=username, password=make_password(password))
+#                 login(request, user)
+#                 return redirect("index")
+#     else:
+#         form = SignUpForm()
+#     return render(request, "signup.html", {"form": form})
+
+
 def signup(request):
-    pass
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+        try:
+            user = User.objects.filter(username=username).first()
+            if user:
+                return render(request, "signup.html", {"form": SignUpForm, "message": "user already exist"})
+            else:
+                user = User.objects.create(
+                    username=username, password=make_password(password))
+                login(request, user)
+                return HttpResponseRedirect(reverse("index"))
+        except User.DoesNotExist:
+            return render(request, "signup.html", {"form": SignUpForm})
+    return render(request, "signup.html", {"form": SignUpForm})
+
 
 
 def index(request):
